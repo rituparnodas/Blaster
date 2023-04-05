@@ -20,6 +20,8 @@ public:
 
 	void MoveRight(float Value);
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -34,7 +36,12 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowprivateAccess = "true"))
 		class UWidgetComponent* OverheadWidget = nullptr;
 
+	UPROPERTY(ReplicatedUsing = OnRep_OverlappingWeapon)
+		class AWeapon* OverlappingWeapon = nullptr;
+
+	UFUNCTION()
+		void OnRep_OverlappingWeapon(AWeapon* LastWeapon);
 public:	
 
-
+	FORCEINLINE void SetOverlappingWeapon(AWeapon* Weapon);
 };

@@ -8,6 +8,7 @@
 #include "Components/WidgetComponent.h"
 #include "Blaster/Weapon/Weapon.h"
 #include "Net/UnrealNetwork.h"
+#include "Blaster/BlasterComponents/CombatComponent.h"
 
 ABlasterCharacter::ABlasterCharacter()
 {
@@ -27,6 +28,9 @@ ABlasterCharacter::ABlasterCharacter()
 
 	OverheadWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("OverHeadWidget"));
 	OverheadWidget->SetupAttachment(RootComponent);
+
+	Combat = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
+	Combat->SetIsReplicated(true);
 }
 
 void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -57,11 +61,12 @@ void ABlasterCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon)
 
 void ABlasterCharacter::SetOverlappingWeapon(AWeapon* Weapon)
 {
-	if (OverlappingWeapon) OverlappingWeapon->ShowPickUpWidget(false); // Runs on Server And Client
+	if (OverlappingWeapon) OverlappingWeapon->ShowPickUpWidget(false); // Runs on Server And LocalMachine
 
 	OverlappingWeapon = Weapon;
 
-	if (IsLocallyControlled() && OverlappingWeapon)
+	// Want Only On Local Machine But Runs On Server
+	if (IsLocallyControlled() &&  OverlappingWeapon)
 	{
 		OverlappingWeapon->ShowPickUpWidget(true);
 	}
@@ -70,11 +75,6 @@ void ABlasterCharacter::SetOverlappingWeapon(AWeapon* Weapon)
 void ABlasterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if (OverlappingWeapon)
-	{
-		OverlappingWeapon->ShowPickUpWidget(true);
-	}
 }
 
 static void InitializeDefaultPawnInputBindings()
@@ -101,6 +101,9 @@ static void InitializeDefaultPawnInputBindings()
 
 		UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("Jump", EKeys::SpaceBar));
 		UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("Jump", EKeys::Gamepad_FaceButton_Top));
+
+		UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("Equip", EKeys::F));
+		UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("Jump", EKeys::Gamepad_RightShoulder));
 	}
 }
 
@@ -117,6 +120,8 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 
 	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &ACharacter::Jump);
+
+	PlayerInputComponent->BindAction("Equip", IE_Pressed, this, &ABlasterCharacter::EquipButtonPressed);
 }
 
 void ABlasterCharacter::MoveForward(float Value)
@@ -136,5 +141,31 @@ void ABlasterCharacter::MoveRight(float Value)
 		const FRotator YawRotation(0.f, Controller->GetControlRotation().Yaw, 0.f);
 		const FVector Direction(FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y));
 		AddMovementInput(Direction, Value);
+	}
+}
+
+void ABlasterCharacter::EquipButtonPressed()
+{
+	if (Combat)
+	{
+		if (HasAuthority()) Combat->EquipWeapon(OverlappingWeapon);
+		else ServerEquipButtonPressed();
+	}
+}
+
+void ABlasterCharacter::ServerEquipButtonPressed_Implementation()
+{
+	if (Combat)
+	{
+		Combat->EquipWeapon(OverlappingWeapon);
+	}
+}
+
+void ABlasterCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	if (Combat)
+	{
+		Combat->Character = this;
 	}
 }

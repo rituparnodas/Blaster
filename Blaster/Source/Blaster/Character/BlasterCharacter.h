@@ -15,12 +15,13 @@ public:
 	ABlasterCharacter();
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 	void MoveForward(float Value);
-
 	void MoveRight(float Value);
+	void EquipButtonPressed();
+	virtual void PostInitializeComponents() override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 
 protected:
 	virtual void BeginPlay() override;
@@ -41,6 +42,13 @@ private:
 
 	UFUNCTION()
 		void OnRep_OverlappingWeapon(AWeapon* LastWeapon);
+
+	UPROPERTY(VisibleAnywhere)
+		class UCombatComponent* Combat;
+
+	UFUNCTION(Server, Reliable)
+		void ServerEquipButtonPressed();
+
 public:	
 
 	FORCEINLINE void SetOverlappingWeapon(AWeapon* Weapon);

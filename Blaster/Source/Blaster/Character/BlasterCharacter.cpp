@@ -31,6 +31,8 @@ ABlasterCharacter::ABlasterCharacter()
 
 	Combat = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
 	Combat->SetIsReplicated(true);
+
+	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 }
 
 void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -72,6 +74,16 @@ void ABlasterCharacter::SetOverlappingWeapon(AWeapon* Weapon)
 	}
 }
 
+bool ABlasterCharacter::IsWeaponEquiped()
+{
+	return Combat && Combat->EquippedWeapon != nullptr;
+}
+
+bool ABlasterCharacter::IsAiming()
+{
+	return Combat && Combat->bIsAiming;
+}
+
 void ABlasterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -103,7 +115,16 @@ static void InitializeDefaultPawnInputBindings()
 		UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("Jump", EKeys::Gamepad_FaceButton_Top));
 
 		UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("Equip", EKeys::F));
-		UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("Jump", EKeys::Gamepad_RightShoulder));
+		UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("Equip", EKeys::Gamepad_FaceButton_Left));
+
+		UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("Crouch", EKeys::C));
+		UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("Crouch", EKeys::Gamepad_FaceButton_Bottom));
+
+		UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("Aim", EKeys::RightMouseButton));
+		UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("Aim", EKeys::Gamepad_RightShoulder));
+
+		UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("Shoot", EKeys::LeftMouseButton));
+		UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("Shoot", EKeys::Gamepad_RightTrigger));
 	}
 }
 
@@ -120,8 +141,14 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 
 	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ABlasterCharacter::CrouchButtonPressed);
 
 	PlayerInputComponent->BindAction("Equip", IE_Pressed, this, &ABlasterCharacter::EquipButtonPressed);
+
+	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &ABlasterCharacter::AimButtonPressed);
+	PlayerInputComponent->BindAction("Aim", IE_Released, this, &ABlasterCharacter::AimButtonReleased);
+
+	PlayerInputComponent->BindAction("Shoot", IE_Pressed, this, &ABlasterCharacter::ShootButtonPressed);
 }
 
 void ABlasterCharacter::MoveForward(float Value)
@@ -148,11 +175,33 @@ void ABlasterCharacter::EquipButtonPressed()
 {
 	if (Combat)
 	{
-		if (HasAuthority()) Combat->EquipWeapon(OverlappingWeapon);
-		else ServerEquipButtonPressed();
+		if (HasAuthority()) Combat->EquipWeapon(OverlappingWeapon); // Server
+		else ServerEquipButtonPressed(); // Remote
 	}
+	else UE_LOG(LogTemp, Warning, TEXT("Combat Is Null"));
 }
 
+void ABlasterCharacter::CrouchButtonPressed()
+{
+	if (bIsCrouched) UnCrouch();
+	else Crouch();
+}
+
+void ABlasterCharacter::AimButtonPressed()
+{
+	if (Combat) Combat->SetAiming(true);
+}
+
+void ABlasterCharacter::AimButtonReleased()
+{
+	if (Combat) Combat->SetAiming(false);
+}
+
+void ABlasterCharacter::ShootButtonPressed()
+{
+}
+
+//RPC
 void ABlasterCharacter::ServerEquipButtonPressed_Implementation()
 {
 	if (Combat)

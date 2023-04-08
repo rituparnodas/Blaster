@@ -94,7 +94,7 @@ void AWeapon::OnRep_WeaponState()
 	{
 	case EWeaponState::EWS_Initial:
 		break;
-	case EWeaponState::EWS_Equipped: ShowPickUpWidget(false);
+	case EWeaponState::EWS_Equipped: ShowPickUpWidget(false); // Why? 
 		break;
 	case EWeaponState::EWS_Dropped:
 		break;

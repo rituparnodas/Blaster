@@ -18,6 +18,10 @@ public:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 	void EquipButtonPressed();
+	void CrouchButtonPressed();
+	void AimButtonPressed();
+	void AimButtonReleased();
+	void ShootButtonPressed();
 	virtual void PostInitializeComponents() override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -43,7 +47,7 @@ private:
 	UFUNCTION()
 		void OnRep_OverlappingWeapon(AWeapon* LastWeapon);
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowprivateAccess = "true"))
 		class UCombatComponent* Combat;
 
 	UFUNCTION(Server, Reliable)
@@ -52,4 +56,7 @@ private:
 public:	
 
 	FORCEINLINE void SetOverlappingWeapon(AWeapon* Weapon);
+
+	bool IsWeaponEquiped();
+	bool IsAiming();
 };

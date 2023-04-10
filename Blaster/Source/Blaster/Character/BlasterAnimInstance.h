@@ -47,4 +47,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "movement", meta = (AllowPrivateAccess = "true"))
 		float Lean = 0.f;
+
+	FRotator CharacterRotationLastFrame;
+	FRotator CharacterRotation;
+
+	FRotator DeltaRotation;
 };

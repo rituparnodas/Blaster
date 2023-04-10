@@ -25,20 +25,26 @@ protected:
 		class ABlasterCharacter* BlasterCharacter = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, Category = "movement", meta = (AllowPrivateAccess = "true"))
-		float Speed;
+		float Speed = 0.f;
 
 	UPROPERTY(BlueprintReadOnly, Category = "movement", meta = (AllowPrivateAccess = "true"))
-		bool bIsInAir;
+		bool bIsInAir = false;
 
 	UPROPERTY(BlueprintReadOnly, Category = "movement", meta = (AllowPrivateAccess = "true"))
-		bool bIsAccelerating;
+		bool bIsAccelerating = false;
 
 	UPROPERTY(BlueprintReadOnly, Category = "movement", meta = (AllowPrivateAccess = "true"))
-		bool bWeaponEquiped;
+		bool bWeaponEquiped = false;
 
 	UPROPERTY(BlueprintReadOnly, Category = "movement", meta = (AllowPrivateAccess = "true"))
-		bool bIsCrouched;
+		bool bIsCrouched = false;
 
 	UPROPERTY(BlueprintReadOnly, Category = "movement", meta = (AllowPrivateAccess = "true"))
-		bool bIsAiming;
+		bool bIsAiming = false;
+
+	UPROPERTY(BlueprintReadOnly, Category = "movement", meta = (AllowPrivateAccess = "true"))
+		float YawOffset = 0.f;
+
+	UPROPERTY(BlueprintReadOnly, Category = "movement", meta = (AllowPrivateAccess = "true"))
+		float Lean = 0.f;
 };

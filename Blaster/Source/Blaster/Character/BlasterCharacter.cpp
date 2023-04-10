@@ -177,6 +177,9 @@ void ABlasterCharacter::EquipButtonPressed()
 	{
 		if (HasAuthority()) Combat->EquipWeapon(OverlappingWeapon); // Server
 		else ServerEquipButtonPressed(); // Remote
+
+		//Combat->EquipWeapon(OverlappingWeapon); // Server
+		//ServerEquipButtonPressed(); // Remote
 	}
 	else UE_LOG(LogTemp, Warning, TEXT("Combat Is Null"));
 }

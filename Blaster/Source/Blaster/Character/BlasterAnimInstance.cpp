@@ -29,5 +29,8 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaTime)
 		bWeaponEquiped = BlasterCharacter->IsWeaponEquiped();
 		bIsCrouched = BlasterCharacter->bIsCrouched;
 		bIsAiming = BlasterCharacter->IsAiming();
+
+		FRotator AimRotation = BlasterCharacter->GetBaseAimRotation();
+		UE_LOG(LogTemp, Warning, TEXT("AimRotationYaw : %f"), AimRotation.Yaw)
 	}
 }

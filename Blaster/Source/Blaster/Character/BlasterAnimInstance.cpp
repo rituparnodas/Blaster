@@ -38,12 +38,12 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaTime)
 		DeltaRotation = FMath::RInterpTo(DeltaRotation, DeltaRot, DeltaTime, 6.f);
 		YawOffset = DeltaRotation.Yaw;
 
-		UE_LOG(LogTemp, Warning, TEXT("AimRotation : %f, MovementRotation : %f, DeltaRot : %f, YawOffset : %f"), 
+		/*UE_LOG(LogTemp, Warning, TEXT("AimRotation : %f, MovementRotation : %f, DeltaRot : %f, YawOffset : %f"), 
 			AimRotation.Yaw,
 			MovementRotation.Yaw,
 			DeltaRot.Yaw,
 			YawOffset
-		);
+		);*/
 
 		CharacterRotationLastFrame = CharacterRotation;
 		CharacterRotation = BlasterCharacter->GetActorRotation();

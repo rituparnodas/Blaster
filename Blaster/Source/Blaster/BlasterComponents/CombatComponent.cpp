@@ -41,12 +41,20 @@ void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip)
 void UCombatComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (Character) Character->GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
 }
 
 void UCombatComponent::SetAiming(bool bAiming)
 {
 	bIsAiming = bAiming; // Direct Setting For Latancy
+	if (Character)
+	{
+		Character->GetCharacterMovement()->MaxWalkSpeed = bAiming ? AimWalkSpeed : BaseWalkSpeed;
+	}
 	ServerSetAiming(bAiming);
+
+
 	//if (!Character->HasAuthority()) // Remote
 	//{
 	//	ServerSetAiming(bAiming);
@@ -65,6 +73,10 @@ void UCombatComponent::OnRep_EquippedWeapon()
 void UCombatComponent::ServerSetAiming_Implementation(bool bAiming)
 {
 	bIsAiming = bAiming;
+	if (Character)
+	{
+		Character->GetCharacterMovement()->MaxWalkSpeed = bAiming ? AimWalkSpeed : BaseWalkSpeed;
+	}
 }
 
 void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

@@ -37,6 +37,9 @@ protected:
 		bool bWeaponEquiped = false;
 
 	UPROPERTY(BlueprintReadOnly, Category = "movement", meta = (AllowPrivateAccess = "true"))
+		class AWeapon* EquipedWeapon;
+
+	UPROPERTY(BlueprintReadOnly, Category = "movement", meta = (AllowPrivateAccess = "true"))
 		bool bIsCrouched = false;
 
 	UPROPERTY(BlueprintReadOnly, Category = "movement", meta = (AllowPrivateAccess = "true"))
@@ -58,4 +61,7 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "movement", meta = (AllowPrivateAccess = "true"))
 		float AO_Pitch = 0.f;
+
+	UPROPERTY(BlueprintReadOnly, Category = "movement", meta = (AllowPrivateAccess = "true"))
+		FTransform LeftHandTransform;
 };

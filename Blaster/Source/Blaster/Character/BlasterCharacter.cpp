@@ -88,6 +88,12 @@ bool ABlasterCharacter::IsAiming()
 	return Combat && Combat->bIsAiming;
 }
 
+AWeapon* ABlasterCharacter::GetEquipedWeapon()
+{
+	if (Combat) return Combat->EquippedWeapon; 
+	return nullptr;
+}
+
 void ABlasterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -250,7 +256,7 @@ void ABlasterCharacter::AimOffset(float DeltaTime)
 	}
 
 	AO_Pitch = GetBaseAimRotation().Pitch;
-	if (AO_Pitch > 90.f && !IsLocallyControlled())
+	if (AO_Pitch > 90.f && !IsLocallyControlled()) // Only For SimulatedProxy
 	{
 		// Mapping Value In Range
 		FVector2D InRange(270.f, 360.f);

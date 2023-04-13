@@ -41,12 +41,14 @@ public:
 
 	FORCEINLINE class USphereComponent* GetAreaSphere() const { return AreaSphere; }
 
+	FORCEINLINE class USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
 		class USkeletalMeshComponent* WeaponMesh;
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
-		 USphereComponent* AreaSphere;
+		 class USphereComponent* AreaSphere;
 
 	UPROPERTY(ReplicatedUsing = OnRep_WeaponState, VisibleAnywhere, Category = "Weapon Properties")
 		EWeaponState WeaponState;

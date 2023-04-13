@@ -10,6 +10,7 @@
 #include "Blaster/Weapon/Weapon.h"
 #include "Net/UnrealNetwork.h"
 #include "Blaster/BlasterComponents/CombatComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 ABlasterCharacter::ABlasterCharacter()
 {
@@ -90,6 +91,8 @@ bool ABlasterCharacter::IsAiming()
 void ABlasterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	AimOffset(DeltaTime);
 }
 
 static void InitializeDefaultPawnInputBindings()
@@ -223,4 +226,28 @@ void ABlasterCharacter::PostInitializeComponents()
 	{
 		Combat->Character = this;
 	}
+}
+
+void ABlasterCharacter::AimOffset(float DeltaTime)
+{
+	if (Combat && !Combat->EquippedWeapon) return;
+	FVector Velocity = GetVelocity();
+	Velocity.Z = 0;
+	float Speed = Velocity.Size();
+	bool bIsInAir = GetMovementComponent()->IsFalling();
+	if (Speed == 0.f && !bIsInAir)
+	{
+		FRotator CurrentAimRotation = FRotator(0.f, GetBaseAimRotation().Yaw, 0.f);
+		FRotator DeltaAimRotation = UKismetMathLibrary::NormalizedDeltaRotator(StartingAimRotation, CurrentAimRotation);
+		AO_Yaw = DeltaAimRotation.Yaw;
+		bUseControllerRotationYaw = false;
+	}
+	if (Speed > 0.f || bIsInAir)
+	{
+		StartingAimRotation = FRotator(0.f, GetBaseAimRotation().Yaw, 0.f); 
+		AO_Yaw = 0.f;
+		bUseControllerRotationYaw = true; 
+	}
+
+	AO_Pitch = GetBaseAimRotation().Pitch;
 }

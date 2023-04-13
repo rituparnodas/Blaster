@@ -23,6 +23,7 @@ public:
 	void AimButtonReleased();
 	void ShootButtonPressed();
 	virtual void PostInitializeComponents() override;
+	void AimOffset(float DeltaTime);
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -53,10 +54,18 @@ private:
 	UFUNCTION(Server, Reliable)
 		void ServerEquipButtonPressed();
 
+	float AO_Yaw = 0.f;
+	float AO_Pitch = 0.f;
+
+	FRotator StartingAimRotation = FRotator::ZeroRotator;
+
 public:	
 
 	FORCEINLINE void SetOverlappingWeapon(AWeapon* Weapon);
 
 	bool IsWeaponEquiped();
 	bool IsAiming();
+
+	FORCEINLINE float GetAO_Yaw() const { return AO_Yaw; }
+	FORCEINLINE float GetAO_Pitch() const { return AO_Pitch; }
 };

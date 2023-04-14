@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "Blaster/BlasterTypes/TurningInPlace.h"
 #include "BlasterAnimInstance.generated.h"
 
 /**
@@ -64,4 +65,7 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "movement", meta = (AllowPrivateAccess = "true"))
 		FTransform LeftHandTransform;
+
+	UPROPERTY(BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+		ETurningInPlace TurningInPlace;
 };

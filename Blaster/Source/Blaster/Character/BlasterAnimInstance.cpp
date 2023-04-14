@@ -33,6 +33,7 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaTime)
 		bIsCrouched = BlasterCharacter->bIsCrouched;
 		bIsAiming = BlasterCharacter->IsAiming();
 		EquipedWeapon = BlasterCharacter->GetEquipedWeapon();
+		TurningInPlace = BlasterCharacter->GetTurningInPlace();
 
 		// This Is Already Replicated So We Don't Need To Replicate
 		FRotator AimRotation = BlasterCharacter->GetBaseAimRotation();  

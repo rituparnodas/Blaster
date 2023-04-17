@@ -56,6 +56,7 @@ private:
 		void ServerEquipButtonPressed();
 
 	float AO_Yaw = 0.f;
+	float InterpAO_Yaw = 0.f;
 	float AO_Pitch = 0.f;
 
 	FRotator StartingAimRotation = FRotator::ZeroRotator;

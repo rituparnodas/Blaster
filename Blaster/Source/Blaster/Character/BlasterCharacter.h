@@ -25,6 +25,7 @@ public:
 	void ShootButtonPressed();
 	virtual void PostInitializeComponents() override;
 	void AimOffset(float DeltaTime);
+	virtual void Jump() override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 

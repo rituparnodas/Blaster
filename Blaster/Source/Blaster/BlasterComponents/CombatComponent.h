@@ -20,6 +20,8 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	void EquipWeapon(class AWeapon* WeaponToEquip);
+
+	void ShootButtonPressed(bool bIsPressed);
 protected:
 	virtual void BeginPlay() override;
 	void SetAiming(bool bAiming);
@@ -44,4 +46,6 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float AimWalkSpeed = 350.f;
+
+	bool bFireButtonPressed;
 };

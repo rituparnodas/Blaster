@@ -11,6 +11,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Blaster/BlasterComponents/CombatComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "BlasterAnimInstance.h"
 
 ABlasterCharacter::ABlasterCharacter()
 {
@@ -189,6 +190,7 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction("Aim", IE_Released, this, &ABlasterCharacter::AimButtonReleased);
 
 	PlayerInputComponent->BindAction("Shoot", IE_Pressed, this, &ABlasterCharacter::ShootButtonPressed);
+	PlayerInputComponent->BindAction("Shoot", IE_Released, this, &ABlasterCharacter::ShootButtonReleased);
 }
 
 void ABlasterCharacter::MoveForward(float Value)
@@ -242,6 +244,12 @@ void ABlasterCharacter::AimButtonReleased()
 
 void ABlasterCharacter::ShootButtonPressed()
 {
+	if (Combat) Combat->ShootButtonPressed(true);
+}
+
+void ABlasterCharacter::ShootButtonReleased()
+{
+	if (Combat) Combat->ShootButtonPressed(false);
 }
 
 //RPC
@@ -304,4 +312,17 @@ void ABlasterCharacter::Jump()
 {
 	if (bIsCrouched) UnCrouch();
 	else Super::Jump();
+}
+
+void ABlasterCharacter::PlayFireMontage(bool bIsAiming)
+{
+	if (!Combat || !Combat->EquippedWeapon) return;
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && FireWeaponMontage)
+	{
+		AnimInstance->Montage_Play(FireWeaponMontage);
+		FName SectionName = bIsAiming ? FName("RifleAim") : FName("RifleHip");
+		AnimInstance->Montage_JumpToSection(SectionName);	
+	}
 }

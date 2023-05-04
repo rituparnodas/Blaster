@@ -23,9 +23,11 @@ public:
 	void AimButtonPressed();
 	void AimButtonReleased();
 	void ShootButtonPressed();
+	void ShootButtonReleased();
 	virtual void PostInitializeComponents() override;
 	void AimOffset(float DeltaTime);
 	virtual void Jump() override;
+	void PlayFireMontage(bool bIsAiming);
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -64,6 +66,9 @@ private:
 
 	ETurningInPlace TurningInPlace;
 	void TurnInPlace(float DeltaTime);
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	class UAnimMontage* FireWeaponMontage = nullptr;
 
 public:	
 
